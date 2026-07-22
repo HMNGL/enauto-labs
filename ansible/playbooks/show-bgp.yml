@@ -1,0 +1,17 @@
+---
+- name: Show BGP summary
+  hosts: routers
+  gather_facts: no
+
+  tasks:
+    - name: Run show ip bgp summary
+      ios_command:
+        commands:
+          - show ip bgp summary
+      register: output
+
+    - name: Print BGP output cleanly
+      debug:
+       var: output.stdout_lines
+
+

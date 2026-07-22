@@ -1,0 +1,16 @@
+---
+- name: Show interfaces
+  hosts: routers
+  gather_facts: no
+
+  tasks:
+    - name: Run show ip interface brief
+      ios_command:
+        commands:
+          - show ip interface brief
+      register: output
+
+    - name: Print interface output cleanly
+      debug:
+        var: output.stdout_lines
+

@@ -1,0 +1,41 @@
+---
+- name: Full OSPF configuration for NAT and R2
+  hosts: routers
+  gather_facts: no
+
+  vars:
+    ospf_process: 1
+    ospf_area: 0
+    interface: GigabitEthernet3
+
+  tasks:
+
+    - name: Configure Gi3 IP
+      ios_config:
+        parents: "interface {{ interface }}"
+        lines:
+          - ip address {{ (inventory_hostname == 'NAT') | ternary('172.16.1.1 255.255.255.252', '172.16.1.2 255.255.255.252') }}
+          - no shut
+
+    - name: Create Loopback interface
+      ios_config:
+        parents: "interface Loopback0"
+        lines:
+          - ip address {{ (inventory_hostname == 'NAT') | ternary('10.10.10.10 255.255.255.255', '20.20.20.20 255.255.255.255') }}
+
+    - name: Configure OSPF on Gi3
+      ios_config:
+        parents: "interface {{ interface }}"
+        lines:
+          - ip ospf {{ ospf_process }} area {{ ospf_area }}
+
+    - name: Configure OSPF router process
+      ios_config:
+        parents: "router ospf {{ ospf_process }}"
+        lines:
+          - network 172.16.1.0 0.0.0.3 area {{ ospf_area }}
+          - network {{ (inventory_hostname == 'NAT') | ternary('10.10.10.10 0.0.0.0', '20.20.20.20 0.0.0.0') }} area {{ ospf_area }}
+          - passive-interface default
+          - no passive-interface {{ interface }}
+
+

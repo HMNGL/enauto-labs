@@ -1,0 +1,19 @@
+---
+- name: Configure BGP between NAT and R2
+  hosts: routers
+  gather_facts: no
+
+  vars:
+    bgp_as: 1
+    interface: GigabitEthernet3
+
+  tasks:
+
+    - name: Configure BGP router process
+      ios_config:
+        parents: "router bgp {{ bgp_as }}"
+        lines:
+          - bgp router-id {{ (inventory_hostname == 'NAT') | ternary('10.10.10.10', '20.20.20.20') }}
+          - neighbor 172.16.1.{{ (inventory_hostname == 'NAT') | ternary('2', '1') }} remote-as {{ bgp_as }}
+          - network {{ (inventory_hostname == 'NAT') | ternary('10.10.10.10', '20.20.20.20') }} mask 255.255.255.255
+

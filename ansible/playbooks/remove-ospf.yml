@@ -1,0 +1,23 @@
+---
+- name: Remove OSPF configuration from NAT and R2
+  hosts: routers
+  gather_facts: no
+
+  tasks:
+
+    - name: Remove OSPF process 1
+      ios_config:
+        lines:
+          - no router ospf 1
+
+    - name: Remove OSPF from Gi3
+      ios_config:
+        parents: "interface GigabitEthernet3"
+        lines:
+          - no ip ospf 1 area 0
+
+    - name: Remove passive-interface default (cleanup)
+      ios_config:
+        parents: "router bgp 1"
+        lines:
+          - no bgp log-neighbor-changes

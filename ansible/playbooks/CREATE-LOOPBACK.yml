@@ -1,0 +1,12 @@
+---
+- name: Configure Loopback Interface
+  hosts: routers
+  gather_facts: no
+
+  tasks:
+    - name: Create Loopback interface
+      ios_config:
+        lines:
+          - interface Loopback10
+          - ip address 10.10.10.10 255.255.255.255
+

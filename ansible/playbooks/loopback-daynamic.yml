@@ -1,0 +1,16 @@
+---
+- name: Create dynamic Loopback
+  hosts: routers
+  gather_facts: no
+
+  vars:
+    loop_id: 20
+    loop_ip: 20.20.20.20
+    loop_mask: 255.255.255.255
+
+  tasks:
+    - name: Configure Loopback
+      ios_config:
+        lines:
+          - "interface Loopback{{ loop_id }}"
+          - "ip address {{ loop_ip }} {{ loop_mask }}"

@@ -1,0 +1,10 @@
+---
+- name: Remove Loopback Interface
+  hosts: routers
+  gather_facts: no
+
+  tasks:
+    - name: Delete Loopback20
+      ios_config:
+        lines:
+          - no interface Loopback20
