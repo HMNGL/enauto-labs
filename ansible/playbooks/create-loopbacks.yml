@@ -1,0 +1,20 @@
+---
+- name: Create loopbacks for BGP
+  hosts: routers
+  gather_facts: no
+
+  tasks:
+
+    - name: Create Loopback10 on NAT
+      ios_config:
+        parents: "interface Loopback10"
+        lines:
+          - ip address 10.10.10.10 255.255.255.255
+      when: inventory_hostname == "NAT"
+
+    - name: Create Loopback20 on R2
+      ios_config:
+        parents: "interface Loopback20"
+        lines:
+          - ip address 20.20.20.20 255.255.255.255
+      when: inventory_hostname == "R2"

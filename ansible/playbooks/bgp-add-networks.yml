@@ -1,0 +1,27 @@
+---
+- name: Add BGP networks for loopbacks
+  hosts: routers
+  gather_facts: no
+
+  vars:
+    bgp_as: 1
+
+  tasks:
+
+    - name: Add BGP network for NAT
+      ios_config:
+        parents:
+          - "router bgp {{ bgp_as }}"
+          - "address-family ipv4"
+        lines:
+          - network 10.10.10.10 mask 255.255.255.255
+      when: inventory_hostname == "NAT"
+
+    - name: Add BGP network for R2
+      ios_config:
+        parents:
+          - "router bgp {{ bgp_as }}"
+          - "address-family ipv4"
+        lines:
+          - network 20.20.20.20 mask 255.255.255.255
+      when: inventory_hostname == "R2"
